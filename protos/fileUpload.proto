@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package fileupload;
+
+service UploadService {
+  rpc Upload (stream Chunk) returns (UploadStatus) {}
+}
+
+// The request message containing file bytes
+message Chunk {
+  bytes data = 1;
+}
+
+// The response message contains the status of upload
+message UploadStatus {
+  enum StatusType {
+    Ok = 0;
+    Failed = 1;
+    Unknown = 2;
+  };
+
+  StatusType status = 1;
+  string msg = 2;
+}
