@@ -28,7 +28,7 @@ add_executable(client
     ${PROTO_SRCS}
     ${GRPC_SRCS}
 )
-target_link_libraries(server
+target_link_libraries(client
     gRPC::grpc++_reflection
     protobuf::libprotobuf
 )

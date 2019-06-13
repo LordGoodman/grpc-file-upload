@@ -45,25 +45,11 @@ class UploadServiceClient {
     std::unique_ptr<ClientWriter<Chunk>> writer(
           stub_->Upload(&context, &response));
 
-    // Every chunk sent to server is limited to 1 MB
-    f.seekg(0, f.end);
-    int length = f.tellg();
-    f.seekg(0, f.beg);
-
-    cout << "Read file size: "
-         << length/1024/1024
-         << " MB" << endl;
 
     // 1 MB 
     const int standard = 1024 * 1024;
 
-    int rounds = length / standard;
-    int remain = length % standard;
-
-    cout << "After " << rounds << " rounds"
-         << " still has " << remain / 1024 << "KB remaining"
-         << endl;
-    
+    /*
     // handle rounds
     for(int i = 0; i < rounds; i++){
       Chunk *chunk = new Chunk;
@@ -88,6 +74,22 @@ class UploadServiceClient {
     writer->Write(*chunk);
     delete [] buffer;
     delete chunk;
+    */
+
+    while(!f.eof()) {
+      Chunk *chunk = new Chunk;
+      char *buffer = new char[standard];
+
+      f.read(buffer, standard);
+
+      long length = f.gcount();
+
+      chunk->set_data(buffer, length);
+      writer->Write(*chunk);
+
+      delete [] buffer;
+      delete chunk;
+    }
 
     // finish writing
     f.close();
